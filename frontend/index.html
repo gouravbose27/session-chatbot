@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session chatbot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top-bar">
+      <h1>Session chatbot</h1>
+      <button id="new-chat" type="button">New chat</button>
+    </header>
+
+    <main id="chat" class="chat" aria-live="polite"></main>
+
+    <div class="composer">
+      <textarea id="message" rows="2" maxlength="4000" placeholder="Type a message"></textarea>
+      <button id="send" type="button">Send</button>
+      <p class="hint">Enter sends · Shift+Enter new line</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

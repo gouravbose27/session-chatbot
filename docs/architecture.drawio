@@ -1,0 +1,161 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.0.0">
+  <diagram name="Context" id="ctx">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p1_user" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_browser" value="Browser app&lt;br&gt;index.html, app.js, style.css" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="260" y="130" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_backend" value="FastAPI backend&lt;br&gt;main.py and its modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_llm" value="LLM provider&lt;br&gt;chosen by LAB_MODEL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="940" y="130" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e1" value="types message" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p1_user" target="p1_browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e2" value="JSON over HTTP&lt;br&gt;port 8000" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p1_browser" target="p1_backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e3" value="ask_llm()&lt;br&gt;over HTTPS" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p1_backend" target="p1_llm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Components" id="comp">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p2_tests" value="tests/test_api.py&lt;br&gt;pytest, fake LLM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_index" value="index.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_appjs" value="app.js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_css" value="style.css&lt;br&gt;linked from index.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_main" value="main.py&lt;br&gt;endpoints, CORS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_services" value="services.py&lt;br&gt;sessions, prompt, chat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="400" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_llm_client" value="llm_client.py&lt;br&gt;ask_llm()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="400" y="280" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_provider" value="LLM provider API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="400" y="520" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_models" value="models.py&lt;br&gt;Pydantic models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="40" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_guardrails" value="guardrails.py&lt;br&gt;input and output checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_guardrails_json" value="guardrails.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="760" y="280" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_settings" value="settings.py&lt;br&gt;MAX_HISTORY_TURNS, paths" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="400" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_prompts" value="prompts.json&lt;br&gt;chat-assistant, topic-judge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_env" value="backend/.env&lt;br&gt;API keys, LAB_MODEL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="400" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e1" value="loads" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_index" target="p2_appjs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e2" value="POST /chat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.8;" edge="1" parent="1" source="p2_appjs" target="p2_main">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e3" value="validates" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_main" target="p2_models">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e4" value="chat, sessions" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_main" target="p2_services">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e5" value="ask_llm()" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_services" target="p2_llm_client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e6" value="guardrail checks" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_services" target="p2_guardrails">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e7" value="topic prompt" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_guardrails" target="p2_prompts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e8" value="read and write" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_guardrails" target="p2_guardrails_json">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e9" value="load_dotenv()" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_settings" target="p2_env">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e10" value="imports app" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;dashed=1;" edge="1" parent="1" source="p2_tests" target="p2_main">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e11" value="HTTPS" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p2_llm_client" target="p2_provider">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Run view" id="run">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p3_browser" value="Browser at localhost:5500" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_static" value="python -m http.server 5500&lt;br&gt;serving frontend/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="300" y="60" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_uvicorn" value="uvicorn main:app&lt;br&gt;port 8000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="300" y="300" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_memory" value="In-memory sessions&lt;br&gt;lost on restart" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="600" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_env" value="backend/.env&lt;br&gt;read at start-up" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="600" y="290" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_json" value="prompts.json, guardrails.json&lt;br&gt;in backend/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="600" y="390" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_llm" value="LLM provider over the internet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e1" value="GET index.html, app.js, style.css" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="p3_browser" target="p3_static">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e2" value="JSON on :8000" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p3_browser" target="p3_uvicorn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e3" value="sessions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p3_uvicorn" target="p3_memory">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e4" value="load_dotenv()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p3_uvicorn" target="p3_env">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e5" value="JSON files" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p3_uvicorn" target="p3_json">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e6" value="HTTPS" style="endArrow=block;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p3_uvicorn" target="p3_llm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,24 @@
+# Decisions
+
+- Prompt layout: "Conversation so far:" lists the earlier turns (or "(none yet)"), then "New message from the user:" and the new message.
+- A turn is one user and one assistant message. The last `MAX_HISTORY_TURNS` (default 6) turns are sent.
+- `turns_in_memory` counts every stored turn, not only the ones sent to the model.
+- A failed LLM call returns 502 and saves nothing, so the user can retry.
+- Sessions live in a Python dict and are lost when the server stops, as the spec says.
+- `settings.py` re-exports `MODEL` from `llm_client.py` so the backend reads settings from one place.
+- `backend/pytest.ini` sets `pythonpath = .` so tests can import the backend modules.
+- Guardrails settings live in `backend/guardrails.json` (path from `GUARDRAILS_FILE`, relative to `backend/`). If the file is missing, `GET /guardrails` and `/chat` fail with 500.
+- Blocked input or output returns HTTP 200 with `reply` set to `blocked_message`, `guardrail` set to the reason, and nothing is saved. Blocked input makes no LLM call; blocked output keeps the token numbers of the call that was made.
+- Masked input is saved masked, so raw emails and phone numbers are never stored. Output is not masked.
+- Phone numbers are masked only when they contain 10 or more digits, so dates such as 2026-10-18 are kept.
+- The topic check is off by default. It calls `ask_llm` through `guardrails.py` with the `topic-judge` prompt from `prompts.json`. If that call fails, `/chat` returns 502.
+- Injection matching is a case-insensitive substring check after collapsing whitespace, so "you are now" can match harmless text.
+- `PUT /guardrails` replaces the whole file. Numeric limits must be greater than 0 (422 otherwise).
+- `/chat` returns `guardrail` as the input reason (`masked: email, phone`) when input was masked, or `null`.
+- `backend/.env.example` is the template for `.env`. Its values differ from the code defaults: it sets `LAB_MODEL=groq:llama-3.3-70b-versatile` and `MAX_HISTORY_TURNS=10`, while the code defaults are `mistral:ministral-3b-2512` and `6`.
+- `PROMPTS_FILE` is read from `.env` but is not in `.env.example`. Its default is `backend/prompts.json`.
+- Session ids are the first 8 hex characters of a UUID4. The spec only says `session_id`.
+- CORS allows only `FRONTEND_ORIGIN` (default `http://localhost:5500`), with all methods and headers.
+- The spec has no authentication, so `PUT /guardrails` is open to anyone who can reach the server.
+- Spec conflict: the spec sets `message` to 1-4000 characters and bad input to 422. Messages over `max_input_chars` (2000 by default) get a 200 blocked reply instead. The code keeps this behaviour, so the spec and code disagree until one is changed.
+- No other mismatch was found between the spec and the code while writing these docs. `docs/sequence.md` and `docs/architecture.drawio` describe the code as built.
