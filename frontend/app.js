@@ -3,12 +3,14 @@ const API = "http://localhost:8000";
 const SESSION_KEY = "session_id";
 const UNREACHABLE_MESSAGE = "Can't reach the server. Is the backend running?";
 
-const state = { sessionId: null, turnCount: 0, busy: false };
+const state = { sessionId: null, turnCount: 0, busy: false, model: null };
 
 const chatEl = document.getElementById("chat");
 const inputEl = document.getElementById("message");
 const sendBtn = document.getElementById("send");
 const newChatBtn = document.getElementById("new-chat");
+const modelEl = document.getElementById("model");
+const FALLBACK_MODEL = { id: "mistral:ministral-3b-2512", label: "Ministral 3B (lab model)" };
 
 class ApiError extends Error {
   constructor(status, message) {
@@ -139,6 +141,7 @@ function setBusy(busy) {
   inputEl.disabled = busy;
   sendBtn.disabled = busy;
   newChatBtn.disabled = busy;
+  modelEl.disabled = busy;
 }
 
 async function createSession() {
@@ -159,7 +162,33 @@ async function loadSession(sessionId) {
   });
 }
 
+function fillModels(providers, defaultId) {
+  modelEl.replaceChildren();
+  for (const group of providers) {
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = group.provider;
+    for (const model of group.models) {
+      optgroup.append(new Option(model.label, model.id));
+    }
+    modelEl.append(optgroup);
+  }
+  modelEl.value = defaultId;
+  // An empty value means the backend uses its default model.
+  state.model = modelEl.value || null;
+}
+
+async function loadModels() {
+  try {
+    const data = await api("GET", "/models");
+    fillModels(data.providers, data.default);
+  } catch {
+    // The session start below shows the connection error, so only the fallback is set here.
+    fillModels([{ provider: "Mistral", models: [FALLBACK_MODEL] }], FALLBACK_MODEL.id);
+  }
+}
+
 async function start() {
+  await loadModels();
   const saved = sessionStorage.getItem(SESSION_KEY);
   if (saved) {
     try {
@@ -189,7 +218,7 @@ async function ensureSession() {
 }
 
 function postChat(text) {
-  return api("POST", "/chat", { session_id: state.sessionId, message: text });
+  return api("POST", "/chat", { session_id: state.sessionId, message: text, model: state.model });
 }
 
 async function chatWithRecovery(text) {
@@ -281,5 +310,8 @@ inputEl.addEventListener("keydown", (event) => {
 });
 sendBtn.addEventListener("click", sendMessage);
 newChatBtn.addEventListener("click", newChat);
+modelEl.addEventListener("change", () => {
+  state.model = modelEl.value || null;
+});
 
 start();

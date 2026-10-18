@@ -11,6 +11,7 @@ from models import (
     DeleteResponse,
     GuardrailConfig,
     HealthResponse,
+    ModelList,
     SessionCreated,
     SessionHistory,
 )
@@ -40,7 +41,13 @@ def create_session() -> SessionCreated:
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     """Send a message in a session and get the reply."""
-    return ChatResponse(**services.chat(request.session_id, request.message))
+    return ChatResponse(**services.chat(request.session_id, request.message, request.model))
+
+
+@app.get("/models", response_model=ModelList)
+def get_models() -> ModelList:
+    """Return the models the user can choose from, and the default."""
+    return ModelList(**services.load_models())
 
 
 @app.get("/sessions/{session_id}", response_model=SessionHistory)

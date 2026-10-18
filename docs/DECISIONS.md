@@ -22,3 +22,7 @@
 - The spec has no authentication, so `PUT /guardrails` is open to anyone who can reach the server.
 - Spec conflict: the spec sets `message` to 1-4000 characters and bad input to 422. Messages over `max_input_chars` (2000 by default) get a 200 blocked reply instead. The code keeps this behaviour, so the spec and code disagree until one is changed.
 - No other mismatch was found between the spec and the code while writing these docs. `docs/sequence.md` and `docs/architecture.drawio` describe the code as built.
+- The model choices live in `backend/models.json` (path from `MODELS_FILE`). The default model is `LAB_MODEL`, and the dropdown selects it.
+- The model is sent with each `/chat` call, not stored in the session, so one chat can use several models. The history is the same for every model.
+- Model ids are the exact API ids from each provider's docs: `gpt-6-luna` and `gpt-6.1-sol` (OpenAI), `claude-opus-5-5` and `claude-haiku-5-5` (Anthropic), `gemini-3.8-flash` (Gemini). The OpenAI docs call the Luna model "GPT-6 Luna", not "GPT 5.6 Luna".
+- Groq is not in `models.json` yet, because no Groq "4.6" model id was found in Groq's docs.

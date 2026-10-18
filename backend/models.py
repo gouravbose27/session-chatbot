@@ -15,6 +15,7 @@ class SessionCreated(BaseModel):
 class ChatRequest(BaseModel):
     session_id: str = Field(..., min_length=1)
     message: str = Field(..., min_length=1, max_length=4000)
+    model: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 class ChatResponse(BaseModel):
@@ -39,6 +40,21 @@ class SessionHistory(BaseModel):
 
 class DeleteResponse(BaseModel):
     deleted: bool
+
+
+class ModelOption(BaseModel):
+    id: str
+    label: str
+
+
+class ModelGroup(BaseModel):
+    provider: str
+    models: list[ModelOption]
+
+
+class ModelList(BaseModel):
+    default: str
+    providers: list[ModelGroup]
 
 
 class GuardrailConfig(BaseModel):

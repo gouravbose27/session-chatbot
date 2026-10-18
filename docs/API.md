@@ -16,6 +16,31 @@ Response, 200:
 }
 ```
 
+## GET /models
+
+Returns the models the dropdown can show, grouped by provider, and the default model (`LAB_MODEL`). The list comes from `backend/models.json`.
+
+Response, 200:
+
+```json
+{
+  "default": "mistral:ministral-3b-2512",
+  "providers": [
+    {
+      "provider": "OpenAI",
+      "models": [
+        {
+          "id": "openai:gpt-6-luna",
+          "label": "GPT-6 Luna"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The response is shortened here. It also lists the Anthropic, Gemini / Google, and Mistral groups.
+
 ## POST /sessions
 
 Starts a new chat session. Sessions are kept in memory and are lost when the server stops.
@@ -39,9 +64,12 @@ Request:
 ```json
 {
   "session_id": "cccafc4f",
-  "message": "hello"
+  "message": "hello",
+  "model": "mistral:ministral-3b-2512"
 }
 ```
+
+`model` is optional. Use a `provider:model` id from `GET /models`. If it is left out, the default model (`LAB_MODEL`) is used. The chat history is kept when the model changes.
 
 `message` must be 1 to 4000 characters. Messages over `max_input_chars` (2000 by default) are blocked with a 200 response. See [DECISIONS.md](DECISIONS.md).
 
@@ -80,7 +108,7 @@ Errors:
 | Status | When | Example body |
 |---|---|---|
 | 404 | Unknown `session_id` | `{"detail": "Unknown session id"}` |
-| 422 | Empty message or message over 4000 characters | See below |
+| 422 | Empty message, message over 4000 characters, or a `model` not listed in `GET /models` | See below |
 | 502 | The model call fails, or the topic check fails | `{"detail": "LLM call failed: provider is down"}` |
 
 422 example, for an empty `message`:

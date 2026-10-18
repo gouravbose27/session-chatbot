@@ -10,7 +10,10 @@
   <div class="app">
     <header class="top-bar">
       <h1>Session chatbot</h1>
-      <button id="new-chat" type="button">New chat</button>
+      <div class="top-actions">
+        <select id="model" aria-label="Model"></select>
+        <button id="new-chat" type="button">New chat</button>
+      </div>
     </header>
 
     <main id="chat" class="chat" aria-live="polite"></main>

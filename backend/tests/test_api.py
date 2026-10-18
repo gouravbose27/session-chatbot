@@ -16,11 +16,13 @@ class FakeLLM:
     def __init__(self):
         self.prompts = []
         self.systems = []
+        self.models = []
         self.fail = False
 
     def __call__(self, prompt, model, system="", cache=False):
         self.prompts.append(prompt)
         self.systems.append(system)
+        self.models.append(model)
         if self.fail:
             raise RuntimeError("provider is down")
         return {
@@ -34,13 +36,26 @@ class FakeLLM:
         }
 
 
+MODEL_CATALOG = {
+    "providers": [
+        {"provider": "OpenAI", "models": [{"id": "openai:gpt-6-luna", "label": "GPT-6 Luna"}]},
+        {"provider": "Mistral", "models": [{"id": "mistral:ministral-3b-2512", "label": "Ministral 3B"}]},
+    ]
+}
+DEFAULT_MODEL = "mistral:ministral-3b-2512"
+
+
 @pytest.fixture
 def fake_llm(monkeypatch, tmp_path, guardrails_file):
     """Use a fake LLM, a temporary prompts file, and an empty session store."""
     prompts_file = tmp_path / "prompts.json"
     prompts = {"chat-assistant": "SYSTEM TEXT", "topic-judge": "JUDGE {allowed_topic}"}
     prompts_file.write_text(json.dumps(prompts), encoding="utf-8")
+    models_file = tmp_path / "models.json"
+    models_file.write_text(json.dumps(MODEL_CATALOG), encoding="utf-8")
     monkeypatch.setattr(settings, "PROMPTS_FILE", str(prompts_file))
+    monkeypatch.setattr(settings, "MODELS_FILE", str(models_file))
+    monkeypatch.setattr(settings, "MODEL", DEFAULT_MODEL)
     monkeypatch.setattr(settings, "MAX_HISTORY_TURNS", 6)
     services.sessions.clear()
     fake = FakeLLM()
@@ -90,6 +105,37 @@ def test_chat_returns_reply_and_metrics(client):
 def test_chat_sends_system_prompt_from_file(client, fake_llm):
     send(client, new_session(client), "hello")
     assert fake_llm.systems == ["SYSTEM TEXT"]
+
+
+def test_get_models_returns_catalog_and_default(client):
+    response = client.get("/models")
+    assert response.status_code == 200
+    assert response.json() == {"default": DEFAULT_MODEL, **MODEL_CATALOG}
+
+
+def test_chat_uses_default_model_when_none_given(client, fake_llm):
+    send(client, new_session(client), "hello")
+    assert fake_llm.models == [DEFAULT_MODEL]
+
+
+def test_chat_uses_selected_model(client, fake_llm):
+    response = client.post("/chat", json={"session_id": new_session(client), "message": "hi", "model": "openai:gpt-6-luna"})
+    assert response.status_code == 200
+    assert fake_llm.models == ["openai:gpt-6-luna"]
+
+
+def test_chat_keeps_history_when_model_changes(client, fake_llm):
+    session_id = new_session(client)
+    client.post("/chat", json={"session_id": session_id, "message": "my name is Priya", "model": "openai:gpt-6-luna"})
+    client.post("/chat", json={"session_id": session_id, "message": "what is my name?", "model": DEFAULT_MODEL})
+    assert fake_llm.models == ["openai:gpt-6-luna", DEFAULT_MODEL]
+    assert "User: my name is Priya" in fake_llm.prompts[1]
+
+
+def test_chat_unknown_model_returns_422_and_calls_nothing(client, fake_llm):
+    response = client.post("/chat", json={"session_id": new_session(client), "message": "hi", "model": "fake:model"})
+    assert response.status_code == 422
+    assert fake_llm.prompts == []
 
 
 def test_second_prompt_contains_first_message(client, fake_llm):

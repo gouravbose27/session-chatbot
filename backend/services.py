@@ -32,6 +32,19 @@ def delete_session(session_id: str) -> None:
     del sessions[session_id]
 
 
+def load_models() -> dict:
+    """Return the model choices for the dropdown and the default model."""
+    with open(settings.MODELS_FILE, encoding="utf-8") as models_file:
+        providers = json.load(models_file)["providers"]
+    return {"default": settings.MODEL, "providers": providers}
+
+
+def is_known_model(model: str) -> bool:
+    """Check that a model id is listed in models.json."""
+    providers = load_models()["providers"]
+    return any(option["id"] == model for group in providers for option in group["models"])
+
+
 def load_system_prompt() -> str:
     """Read the chat-assistant system prompt from the prompts file."""
     with open(settings.PROMPTS_FILE, encoding="utf-8") as prompts_file:
@@ -52,9 +65,13 @@ def build_prompt(history: list[dict], message: str) -> str:
     return "\n".join(lines)
 
 
-def chat(session_id: str, message: str) -> dict:
+def chat(session_id: str, message: str, model: str | None = None) -> dict:
     """Answer one message, remember the turn, and return the reply with its metrics."""
     history = get_session(session_id)
+    if model is None:
+        model = settings.MODEL
+    elif not is_known_model(model):
+        raise HTTPException(status_code=422, detail=f"Unknown model: {model}")
     config = guardrails.load_config()
 
     try:
@@ -72,7 +89,7 @@ def chat(session_id: str, message: str) -> dict:
     system = load_system_prompt()
 
     try:
-        result = ask_llm(prompt, model=settings.MODEL, system=system)
+        result = ask_llm(prompt, model=model, system=system)
     except Exception as error:
         # Nothing is saved when the model call fails, so the user can retry.
         raise HTTPException(status_code=502, detail=f"LLM call failed: {error}")
